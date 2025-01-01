@@ -5,34 +5,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const breathingGuide = document.getElementById('breathing-guide');
     clearInterval(mainInterval);
     clearButtonsBackground();
-    document.getElementById('time-gap-display').innerHTML = event.target.value;
+    document.getElementById('time-gap-display').innerHTML = `<span>${event.target.value}<small>&nbsp;sec</small></span>`;
     breathingGuide.innerHTML = '';
     breathingGuide.style.backgroundColor = 'white';
     breathingGuide.style.boxShadow = 'none';
   })
   document.getElementById('button-square').addEventListener('click', (event) => {
-    clearButtonsBackground();
-    event.target.style.backgroundColor = 'black';
-    event.target.style.color = 'white';
-    const timeGap = document.getElementById('time-gap-display').innerHTML;
-    clearInterval(mainInterval);
-    squareBreathing(timeGap * 10);
+    const timeGapValue = document.getElementById('time-gap').value;
+    prepareToBreath(event.target);
+    squareBreathing(timeGapValue * 10);
   })
   document.getElementById('button-triangle').addEventListener('click', (event) => {
-    clearButtonsBackground();
-    event.target.style.backgroundColor = 'black';
-    event.target.style.color = 'white';
-    const timeGap = document.getElementById('time-gap-display').innerHTML;
-    clearInterval(mainInterval);
-    triangleBreating(STATUS.exhale, timeGap * 10);
+    const timeGapValue = document.getElementById('time-gap').value;
+    prepareToBreath(event.target);
+    triangleBreating(STATUS.exhale, timeGapValue * 10);
   })
   document.getElementById('button-circle').addEventListener('click', (event) => {
-    clearButtonsBackground();
-    event.target.style.backgroundColor = 'black';
-    event.target.style.color = 'white';
-    const timeGap = document.getElementById('time-gap-display').innerHTML;
-    clearInterval(mainInterval);
-    circleBreating(timeGap * 10);
+    const timeGapValue = document.getElementById('time-gap').value;
+    prepareToBreath(event.target);
+    circleBreating(timeGapValue * 10);
   })
 });
 
@@ -43,37 +34,47 @@ const clearButtonsBackground = () => {
   });
 }
 
-const printStatus = (status, elapsedTime) => {
+const prepareToBreath = (eventTarget) => {
+  clearButtonsBackground();
+  eventTarget.style.backgroundColor = 'black';
+  eventTarget.style.color = 'white';
+  clearInterval(mainInterval);
+};
+
+const holdingShape = (breathingGuide, color = '#56A8F5') => {
+  breathingGuide.style.borderRadius = '20%';
+  breathingGuide.style.width = '75px';
+  breathingGuide.style.height = '75px';
+  breathingGuide.style.backgroundColor = color;
+  breathingGuide.style.boxShadow = `0 0 20px 1px ${color}`;
+}
+
+const inhaleShape = (breathingGuide, percentage, color = '#F55E56') => {
+  breathingGuide.style.borderRadius = '100%';
+  breathingGuide.style.width = `${percentage}px`;
+  breathingGuide.style.height = `${percentage}px`;
+  breathingGuide.style.backgroundColor = color;
+  breathingGuide.style.boxShadow = `0 0 20px 1px ${color}`;
+};
+
+const exhaleShape = (breathingGuide, percentage, color = '#E8F556') => {
+  breathingGuide.style.borderRadius = '100%';
+  breathingGuide.style.width = `${100 - percentage}px`;
+  breathingGuide.style.height = `${100 - percentage}px`;
+  breathingGuide.style.backgroundColor = color;
+  breathingGuide.style.boxShadow = `0 0 20px 1px ${color}`;
+}
+
+const updateShape = (status, elapsedTime) => {
   const breathingGuide = document.getElementById('breathing-guide');
-  const timeGapDisplay = document.getElementById('time-gap-display').innerHTML;
-  const percentage = elapsedTime / timeGapDisplay * 10;
-  if (status === STATUS.hold) {
-    breathingGuide.style.borderRadius = '20%';
-    breathingGuide.style.width = '75px';
-    breathingGuide.style.height = '75px';
-    breathingGuide.style.backgroundColor = '#56A8F5';
-    breathingGuide.style.boxShadow = '0 0 20px 1px #56A8F5';
-  };
-  if (status === STATUS.inhale) {
-    breathingGuide.style.borderRadius = '100%';
-    breathingGuide.style.width = `${percentage}px`;
-    breathingGuide.style.height = `${percentage}px`;
-    breathingGuide.style.backgroundColor = '#F55E56';
-    breathingGuide.style.boxShadow = '0 0 20px 1px #F55E56';
-  };
-  if (status === STATUS.exhale) {
-    breathingGuide.style.borderRadius = '100%';
-    breathingGuide.style.width = `${100 - percentage}px`;
-    breathingGuide.style.height = `${100 - percentage}px`;
-    breathingGuide.style.backgroundColor = '#E8F556';
-    breathingGuide.style.boxShadow = '0 0 20px 1px #E8F556';
-  };
-  if (timeGapDisplay < 3) {
-    breathingGuide.innerHTML = ''
-  } else {
-    breathingGuide.innerHTML = timeGapDisplay - (elapsedTime / 10).toFixed(0)
-  if (status === STATUS.hold) breathingGuide.innerHTML += "<small style='font-size: 1rem'>hold</small>"
-  }
+  const timeGapValue = document.getElementById('time-gap').value;
+  const percentage = elapsedTime / timeGapValue * 10;
+  if (status === STATUS.hold) holdingShape(breathingGuide);
+  if (status === STATUS.inhale) inhaleShape(breathingGuide, percentage);
+  if (status === STATUS.exhale) exhaleShape(breathingGuide, percentage);
+
+  breathingGuide.innerHTML = timeGapValue - (elapsedTime / 10).toFixed(0)
+  breathingGuide.innerHTML += `<small style='font-size: 1rem'>${status}</small>`
 };
 
 /**
@@ -87,7 +88,7 @@ const squareBreathing = (timeGap = 40) => {
   mainInterval = setInterval(() => {
     const currentTime = Date.now();
     const elapsedTime = Math.floor((currentTime - startTime) / 100);
-    printStatus(status, elapsedTime);
+    updateShape(status, elapsedTime);
     if (elapsedTime >= timeGap) {
       startTime = currentTime;
       if ([STATUS.inhale, STATUS.exhale].includes(status)) {
@@ -113,7 +114,7 @@ const triangleBreating = (holdAfter = STATUS.inhale, timeGap = 40) => {
   mainInterval = setInterval(() => {
     const currentTime = Date.now();
     const elapsedTime = Math.floor((currentTime - startTime) / 100);
-    printStatus(status, elapsedTime);
+    updateShape(status, elapsedTime);
     if (elapsedTime >= timeGap) {
       startTime = currentTime;
       switch (status) {
@@ -141,7 +142,7 @@ const circleBreating = (timeGap = 40) => {
   mainInterval = setInterval(() => {
     const currentTime = Date.now();
     const elapsedTime = Math.floor((currentTime - startTime) / 100);
-    printStatus(status, elapsedTime);
+    updateShape(status, elapsedTime);
     if (elapsedTime >= timeGap) {
       startTime = currentTime;
       switch (status) {

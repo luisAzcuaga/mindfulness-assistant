@@ -1,5 +1,6 @@
 body {
   max-width: 800px;
+  width: 80%;
   margin: 10px auto;
   display: flex;
   justify-content: center;
@@ -14,6 +15,9 @@ body {
 
 .button {
   font-size: 2rem;
+  border: 1px solid black;
+  transition: .2s;
+  padding: 0px 15px;
 }
 
 .button:hover {
@@ -21,7 +25,6 @@ body {
   cursor: pointer;
   background-color: black !important;
   color: white !important;
-  transition: .2s;
 }
 
 #controls-container {
@@ -35,14 +38,16 @@ body {
 #controls-container #time-gap-display {
   display: flex;
   justify-content: center;
+  font-size: 2rem;
 }
 
 #breathing-guide-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
+  margin-top: 50px;
 }
 
 #breathing-guide-container #breathing-guide {
