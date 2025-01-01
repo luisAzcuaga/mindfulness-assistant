@@ -4,27 +4,44 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('time-gap').addEventListener('change', (event) => {
     const breathingGuide = document.getElementById('breathing-guide');
     clearInterval(mainInterval);
+    clearButtonsBackground();
     document.getElementById('time-gap-display').innerHTML = event.target.value;
     breathingGuide.innerHTML = '';
     breathingGuide.style.backgroundColor = 'white';
     breathingGuide.style.boxShadow = 'none';
   })
-  document.getElementById('button-square').addEventListener('click', () => {
+  document.getElementById('button-square').addEventListener('click', (event) => {
+    clearButtonsBackground();
+    event.target.style.backgroundColor = 'black';
+    event.target.style.color = 'white';
     const timeGap = document.getElementById('time-gap-display').innerHTML;
     clearInterval(mainInterval);
     squareBreathing(timeGap * 10);
   })
-  document.getElementById('button-triangle').addEventListener('click', () => {
+  document.getElementById('button-triangle').addEventListener('click', (event) => {
+    clearButtonsBackground();
+    event.target.style.backgroundColor = 'black';
+    event.target.style.color = 'white';
     const timeGap = document.getElementById('time-gap-display').innerHTML;
     clearInterval(mainInterval);
     triangleBreating(STATUS.exhale, timeGap * 10);
   })
-  document.getElementById('button-circle').addEventListener('click', () => {
+  document.getElementById('button-circle').addEventListener('click', (event) => {
+    clearButtonsBackground();
+    event.target.style.backgroundColor = 'black';
+    event.target.style.color = 'white';
     const timeGap = document.getElementById('time-gap-display').innerHTML;
     clearInterval(mainInterval);
     circleBreating(timeGap * 10);
   })
 });
+
+const clearButtonsBackground = () => {
+  Array.from(document.getElementsByClassName('button')).forEach((button) => {
+    button.style.backgroundColor = '';
+    button.style.color = 'black';
+  });
+}
 
 const printStatus = (status, elapsedTime) => {
   const breathingGuide = document.getElementById('breathing-guide');
@@ -32,11 +49,11 @@ const printStatus = (status, elapsedTime) => {
   const percentage = elapsedTime / timeGapDisplay * 10;
   if (status === STATUS.hold) {
     breathingGuide.style.borderRadius = '20%';
-    breathingGuide.style.width = '100px';
-    breathingGuide.style.height = '100px';
+    breathingGuide.style.width = '75px';
+    breathingGuide.style.height = '75px';
     breathingGuide.style.backgroundColor = '#56A8F5';
     breathingGuide.style.boxShadow = '0 0 20px 1px #56A8F5';
-  }; 
+  };
   if (status === STATUS.inhale) {
     breathingGuide.style.borderRadius = '100%';
     breathingGuide.style.width = `${percentage}px`;
@@ -54,7 +71,8 @@ const printStatus = (status, elapsedTime) => {
   if (timeGapDisplay < 3) {
     breathingGuide.innerHTML = ''
   } else {
-    breathingGuide.innerHTML = (elapsedTime / 10).toFixed(0);
+    breathingGuide.innerHTML = timeGapDisplay - (elapsedTime / 10).toFixed(0)
+  if (status === STATUS.hold) breathingGuide.innerHTML += "<small style='font-size: 1rem'>hold</small>"
   }
 };
 
@@ -79,9 +97,9 @@ const squareBreathing = (timeGap = 40) => {
         status = STATUS.exhale;
       } else if (status === STATUS.hold && formerStatus === STATUS.exhale) {
         status = STATUS.inhale;
-      } 
+      }
     };
-  },100);
+  }, 100);
 }
 
 /**
@@ -110,7 +128,7 @@ const triangleBreating = (holdAfter = STATUS.inhale, timeGap = 40) => {
           break;
       }
     };
-  },100);
+  }, 100);
 };
 
 /**
@@ -135,5 +153,5 @@ const circleBreating = (timeGap = 40) => {
           break;
       }
     };
-  },100);
+  }, 100);
 };
