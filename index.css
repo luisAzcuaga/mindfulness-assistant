@@ -17,7 +17,7 @@ body {
   font-size: 2rem;
   border: 1px solid black;
   transition: .2s;
-  padding: 0px 15px;
+  padding: 0px 10px;
 }
 
 .button:hover {
@@ -31,11 +31,11 @@ body {
   margin: auto;
 }
 
-#controls-container #time-gap {
+#controls-container #time-interval-input {
   width: 100%;
 }
 
-#controls-container #time-gap-display {
+#controls-container #time-interval-display {
   display: flex;
   justify-content: center;
   font-size: 2rem;

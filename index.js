@@ -1,29 +1,31 @@
 const STATUS = { inhale: 'inhale', exhale: 'exhale', hold: 'hold' };
+
 let mainInterval = null;
+
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('time-gap').addEventListener('change', (event) => {
+  document.getElementById('time-interval-input').addEventListener('change', (event) => {
     const breathingGuide = document.getElementById('breathing-guide');
     clearInterval(mainInterval);
     clearButtonsBackground();
-    document.getElementById('time-gap-display').innerHTML = `<span>${event.target.value}<small>&nbsp;sec</small></span>`;
+    document.getElementById('time-interval-display').innerHTML = `<span>${event.target.value}<small>&nbsp;sec</small></span>`;
     breathingGuide.innerHTML = '';
     breathingGuide.style.backgroundColor = 'white';
     breathingGuide.style.boxShadow = 'none';
   })
   document.getElementById('button-square').addEventListener('click', (event) => {
-    const timeGapValue = document.getElementById('time-gap').value;
+    const timeIntervalValue = document.getElementById('time-interval-input').value;
     prepareToBreath(event.target);
-    squareBreathing(timeGapValue * 10);
+    squareBreathing(timeIntervalValue * 10);
   })
   document.getElementById('button-triangle').addEventListener('click', (event) => {
-    const timeGapValue = document.getElementById('time-gap').value;
+    const timeIntervalValue = document.getElementById('time-interval-input').value;
     prepareToBreath(event.target);
-    triangleBreating(STATUS.exhale, timeGapValue * 10);
+    triangleBreating(STATUS.exhale, timeIntervalValue * 10);
   })
   document.getElementById('button-circle').addEventListener('click', (event) => {
-    const timeGapValue = document.getElementById('time-gap').value;
+    const timeIntervalValue = document.getElementById('time-interval-input').value;
     prepareToBreath(event.target);
-    circleBreating(timeGapValue * 10);
+    circleBreating(timeIntervalValue * 10);
   })
 });
 
@@ -35,7 +37,7 @@ const clearButtonsBackground = () => {
 }
 
 const prepareToBreath = (eventTarget) => {
-  clearButtonsBackground();
+  clearButtonsBackground(); // clear previous selected button
   eventTarget.style.backgroundColor = 'black';
   eventTarget.style.color = 'white';
   clearInterval(mainInterval);
@@ -67,13 +69,13 @@ const exhaleShape = (breathingGuide, percentage, color = '#E8F556') => {
 
 const updateShape = (status, elapsedTime) => {
   const breathingGuide = document.getElementById('breathing-guide');
-  const timeGapValue = document.getElementById('time-gap').value;
-  const percentage = elapsedTime / timeGapValue * 10;
+  const timeIntervalValue = document.getElementById('time-interval-input').value;
+  const percentage = elapsedTime / timeIntervalValue * 10;
   if (status === STATUS.hold) holdingShape(breathingGuide);
   if (status === STATUS.inhale) inhaleShape(breathingGuide, percentage);
   if (status === STATUS.exhale) exhaleShape(breathingGuide, percentage);
 
-  breathingGuide.innerHTML = timeGapValue - (elapsedTime / 10).toFixed(0)
+  breathingGuide.innerHTML = timeIntervalValue - (elapsedTime / 10).toFixed(0)
   breathingGuide.innerHTML += `<small style='font-size: 1rem'>${status}</small>`
 };
 
