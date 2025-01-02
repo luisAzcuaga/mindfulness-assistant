@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearInterval(mainInterval);
     clearButtonsBackground();
     document.getElementById('time-interval-display').innerHTML = `<span>${event.target.value}<small>&nbsp;sec</small></span>`;
+    document.getElementById('controls-container').style.opacity = '1';
     breathingGuide.innerHTML = '';
     breathingGuide.style.backgroundColor = 'white';
     breathingGuide.style.boxShadow = 'none';
@@ -41,6 +42,7 @@ const prepareToBreath = (eventTarget) => {
   eventTarget.style.backgroundColor = 'black';
   eventTarget.style.color = 'white';
   clearInterval(mainInterval);
+  document.getElementById('controls-container').style.opacity = '0.3';
 };
 
 const holdingShape = (breathingGuide, color = '#56A8F5') => {

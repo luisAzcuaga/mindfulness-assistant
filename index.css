@@ -29,6 +29,10 @@ body {
 
 #controls-container {
   margin: auto;
+  transition: .4s;
+}
+#controls-container:hover {
+  opacity: 1 !important;
 }
 
 #controls-container #time-interval-input {
