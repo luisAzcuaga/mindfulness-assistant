@@ -35,23 +35,13 @@ body {
   opacity: 1 !important;
 }
 
-#controls-container #time-interval-input {
-  width: 100%;
-}
-
-#controls-container #time-interval-display {
-  display: flex;
-  justify-content: center;
-  font-size: 2rem;
-}
-
 #breathing-guide-container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 200px;
   height: 200px;
-  margin-top: 50px;
+  margin-top: 150px;
 }
 
 #breathing-guide-container #breathing-guide {
@@ -59,7 +49,8 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-size: 4rem;
   transition: .4s;
-  width: 100px;
-  height: 100px;
+  width: 0;
+  height: 0;
 }

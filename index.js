@@ -1,34 +1,53 @@
-const STATUS = { inhale: 'inhale', exhale: 'exhale', hold: 'hold' };
+STATUS = { inhale: 'inhale', exhale: 'exhale', hold: 'hold' };
+BREATHING_TIME_INTERVAL_MILLIS = 4_000; // 4 seconds
 
 let mainInterval = null;
+let currentShape = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('time-interval-input').addEventListener('change', (event) => {
-    const breathingGuide = document.getElementById('breathing-guide');
-    clearInterval(mainInterval);
-    clearButtonsBackground();
-    document.getElementById('time-interval-display').innerHTML = `<span>${event.target.value}<small>&nbsp;sec</small></span>`;
-    document.getElementById('controls-container').style.opacity = '1';
-    breathingGuide.innerHTML = '';
-    breathingGuide.style.backgroundColor = 'white';
-    breathingGuide.style.boxShadow = 'none';
+  const buttonSquare = document.getElementById('button-square');
+  const buttonTriangle = document.getElementById('button-triangle');
+  const buttonCircle = document.getElementById('button-circle');
+
+  buttonSquare.addEventListener('click', (event) => {
+    if (mainInterval && currentShape === event.target.id) {
+      stopGuide();
+    } else {
+      prepareToBreath(event.target);
+      squareBreathing(BREATHING_TIME_INTERVAL_MILLIS);
+    }
   })
-  document.getElementById('button-square').addEventListener('click', (event) => {
-    const timeIntervalValue = document.getElementById('time-interval-input').value;
-    prepareToBreath(event.target);
-    squareBreathing(timeIntervalValue * 10);
+  buttonTriangle.addEventListener('click', (event) => {
+    if (mainInterval && currentShape === event.target.id) {
+      stopGuide();
+    } else {
+      prepareToBreath(event.target);
+      triangleBreathing(STATUS.exhale, BREATHING_TIME_INTERVAL_MILLIS);
+    }
   })
-  document.getElementById('button-triangle').addEventListener('click', (event) => {
-    const timeIntervalValue = document.getElementById('time-interval-input').value;
-    prepareToBreath(event.target);
-    triangleBreating(STATUS.exhale, timeIntervalValue * 10);
-  })
-  document.getElementById('button-circle').addEventListener('click', (event) => {
-    const timeIntervalValue = document.getElementById('time-interval-input').value;
-    prepareToBreath(event.target);
-    circleBreating(timeIntervalValue * 10);
+  buttonCircle.addEventListener('click', (event) => {
+    if (mainInterval && currentShape === event.target.id) {
+      stopGuide();
+    } else {
+      prepareToBreath(event.target);
+      circleBreathing(BREATHING_TIME_INTERVAL_MILLIS);
+    }
   })
 });
+
+const stopGuide = () => {
+  clearInterval(mainInterval);
+  mainInterval = null;
+  currentShape = null;
+  clearButtonsBackground();
+  const breathingGuide = document.getElementById('breathing-guide');
+  document.getElementById('controls-container').style.opacity = '1';
+  breathingGuide.innerHTML = '';
+  breathingGuide.style.backgroundColor = 'white';
+  breathingGuide.style.boxShadow = 'none';
+  breathingGuide.style.width = '0';
+  breathingGuide.style.height = '0';
+};
 
 const clearButtonsBackground = () => {
   Array.from(document.getElementsByClassName('button')).forEach((button) => {
@@ -38,98 +57,100 @@ const clearButtonsBackground = () => {
 }
 
 const prepareToBreath = (eventTarget) => {
+  clearInterval(mainInterval);
   clearButtonsBackground(); // clear previous selected button
+  document.getElementById('controls-container').style.opacity = '0.3';
+  currentShape = eventTarget.id;
   eventTarget.style.backgroundColor = 'black';
   eventTarget.style.color = 'white';
-  clearInterval(mainInterval);
-  document.getElementById('controls-container').style.opacity = '0.3';
 };
 
 const holdingShape = (breathingGuide, color = '#56A8F5') => {
   breathingGuide.style.borderRadius = '20%';
-  breathingGuide.style.width = '75px';
-  breathingGuide.style.height = '75px';
+  breathingGuide.style.width = '75%';
+  breathingGuide.style.height = '75%';
   breathingGuide.style.backgroundColor = color;
   breathingGuide.style.boxShadow = `0 0 20px 1px ${color}`;
 }
 
 const inhaleShape = (breathingGuide, percentage, color = '#F55E56') => {
   breathingGuide.style.borderRadius = '100%';
-  breathingGuide.style.width = `${percentage}px`;
-  breathingGuide.style.height = `${percentage}px`;
+  breathingGuide.style.width = `${percentage}%`;
+  breathingGuide.style.height = `${percentage}%`;
   breathingGuide.style.backgroundColor = color;
   breathingGuide.style.boxShadow = `0 0 20px 1px ${color}`;
 };
 
 const exhaleShape = (breathingGuide, percentage, color = '#E8F556') => {
   breathingGuide.style.borderRadius = '100%';
-  breathingGuide.style.width = `${100 - percentage}px`;
-  breathingGuide.style.height = `${100 - percentage}px`;
+  breathingGuide.style.width = `${100 - percentage}%`;
+  breathingGuide.style.height = `${100 - percentage}%`;
   breathingGuide.style.backgroundColor = color;
   breathingGuide.style.boxShadow = `0 0 20px 1px ${color}`;
 }
 
-const updateShape = (status, elapsedTime) => {
-  const breathingGuide = document.getElementById('breathing-guide');
-  const timeIntervalValue = document.getElementById('time-interval-input').value;
-  const percentage = elapsedTime / timeIntervalValue * 10;
-  if (status === STATUS.hold) holdingShape(breathingGuide);
-  if (status === STATUS.inhale) inhaleShape(breathingGuide, percentage);
-  if (status === STATUS.exhale) exhaleShape(breathingGuide, percentage);
+const updateShape = (currentStatus, elapsedMillis, timeInterval) => {
+  if (elapsedMillis >= timeInterval) return;
 
-  breathingGuide.innerHTML = timeIntervalValue - (elapsedTime / 10).toFixed(0)
-  breathingGuide.innerHTML += `<small style='font-size: 1rem'>${status}</small>`
+  const breathingGuide = document.getElementById('breathing-guide');
+  const remainingSeconds = ((timeInterval - elapsedMillis) / 1000).toFixed(0);
+  const percentage = elapsedMillis / timeInterval * 100;
+  if (currentStatus === STATUS.hold) holdingShape(breathingGuide);
+  if (currentStatus === STATUS.inhale) inhaleShape(breathingGuide, percentage);
+  if (currentStatus === STATUS.exhale) exhaleShape(breathingGuide, percentage);
+  breathingGuide.innerHTML = remainingSeconds;
+  breathingGuide.innerHTML += `<small style='font-size: 1.5rem'>${currentStatus}</small>`
 };
 
 /**
- * Square breating: Ideal for axious moments.
- * @param {number} timeGap - time in seconds for each step. 
+ * Square breathing: Ideal for axious moments.
+ * @param {number} timeInterval - time in milliseconds for each step. 
  */
-const squareBreathing = (timeGap = 40) => {
+const squareBreathing = (timeInterval) => {
   let startTime = Date.now();
-  let status = STATUS.inhale;
+  let currentStatus = STATUS.inhale;
   let formerStatus = STATUS.inhale;
   mainInterval = setInterval(() => {
     const currentTime = Date.now();
-    const elapsedTime = Math.floor((currentTime - startTime) / 100);
-    updateShape(status, elapsedTime);
-    if (elapsedTime >= timeGap) {
+    const elapsedMillis = (currentTime - startTime);
+    updateShape(currentStatus, elapsedMillis, timeInterval);
+    if (elapsedMillis >= timeInterval) {
       startTime = currentTime;
-      if ([STATUS.inhale, STATUS.exhale].includes(status)) {
-        formerStatus = status;
-        status = STATUS.hold;
-      } else if (status === STATUS.hold && formerStatus === STATUS.inhale) {
-        status = STATUS.exhale;
-      } else if (status === STATUS.hold && formerStatus === STATUS.exhale) {
-        status = STATUS.inhale;
+      if ([STATUS.inhale, STATUS.exhale].includes(currentStatus)) {
+        formerStatus = currentStatus;
+        currentStatus = STATUS.hold;
+      } else if (currentStatus === STATUS.hold && formerStatus === STATUS.inhale) {
+        currentStatus = STATUS.exhale;
+      } else if (currentStatus === STATUS.hold && formerStatus === STATUS.exhale) {
+        currentStatus = STATUS.inhale;
       }
     };
   }, 100);
 }
 
 /**
- * Square breating: Ideal for axious moments.
+ * Square breathing: Ideal for axious moments.
  * @param {inhale | exhale} holdAfter - When will the holding step shows up.
- * @param {number} timeGap - time in seconds for each step. 
+ * @param {number} timeInterval - time in milliseconds for each step. 
  */
-const triangleBreating = (holdAfter = STATUS.inhale, timeGap = 40) => {
+const triangleBreathing = (holdAfter = STATUS.inhale, timeInterval) => {
   let startTime = Date.now();
-  let status = STATUS.inhale;
+  let currentStatus = STATUS.inhale;
   mainInterval = setInterval(() => {
     const currentTime = Date.now();
-    const elapsedTime = Math.floor((currentTime - startTime) / 100);
-    updateShape(status, elapsedTime);
-    if (elapsedTime >= timeGap) {
+    const elapsedMillis = (currentTime - startTime);
+    updateShape(currentStatus, elapsedMillis, timeInterval);
+    if (elapsedMillis >= timeInterval) {
       startTime = currentTime;
-      switch (status) {
+      switch (currentStatus) {
         case STATUS.inhale:
-          status = holdAfter === STATUS.inhale ? STATUS.hold : STATUS.exhale;
+          currentStatus = holdAfter === STATUS.inhale ? STATUS.hold : STATUS.exhale;
           break;
         case STATUS.exhale:
-          status = holdAfter === STATUS.inhale ? STATUS.inhale : STATUS.hold;
+          currentStatus = holdAfter === STATUS.inhale ? STATUS.inhale : STATUS.hold;
           break;
         case STATUS.hold:
-          status = holdAfter === STATUS.inhale ? STATUS.exhale : STATUS.inhale;
+          currentStatus = holdAfter === STATUS.inhale ? STATUS.exhale : STATUS.inhale;
           break;
       }
     };
@@ -137,24 +158,24 @@ const triangleBreating = (holdAfter = STATUS.inhale, timeGap = 40) => {
 };
 
 /**
- * Circle breating: Ideal to recover your breath.
- * @param {number} timeGap - time in seconds for each step. 
+ * Circle breathing: Ideal to recover your breath.
+ * @param {number} timeInterval - time in milliseconds for each step. 
  */
-const circleBreating = (timeGap = 40) => {
+const circleBreathing = (timeInterval) => {
   let startTime = Date.now();
-  let status = STATUS.inhale;
+  let currentStatus = STATUS.inhale;
   mainInterval = setInterval(() => {
     const currentTime = Date.now();
-    const elapsedTime = Math.floor((currentTime - startTime) / 100);
-    updateShape(status, elapsedTime);
-    if (elapsedTime >= timeGap) {
+    const elapsedMillis = (currentTime - startTime);
+    updateShape(currentStatus, elapsedMillis, timeInterval);
+    if (elapsedMillis >= timeInterval) {
       startTime = currentTime;
-      switch (status) {
+      switch (currentStatus) {
         case STATUS.inhale:
-          status = STATUS.exhale;
+          currentStatus = STATUS.exhale;
           break;
         case STATUS.exhale:
-          status = STATUS.inhale;
+          currentStatus = STATUS.inhale;
           break;
       }
     };
