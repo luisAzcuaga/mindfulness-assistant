@@ -1,5 +1,6 @@
 STATUS = { inhale: 'inhale', exhale: 'exhale', hold: 'hold' };
 BREATHING_TIME_INTERVAL_MILLIS = 4_000; // 4 seconds
+REFRESH_RATE_MILLIS = 200;
 
 let mainInterval = null;
 let currentShape = null;
@@ -50,7 +51,8 @@ const stopGuide = () => {
 };
 
 const clearButtonsBackground = () => {
-  Array.from(document.getElementsByClassName('button')).forEach((button) => {
+  const controlsContainer = document.getElementById('controls-container')
+  Array.from(controlsContainer.getElementsByClassName('button')).forEach((button) => {
     button.style.backgroundColor = '';
     button.style.color = 'black';
   });
@@ -60,6 +62,7 @@ const prepareToBreath = (eventTarget) => {
   clearInterval(mainInterval);
   clearButtonsBackground(); // clear previous selected button
   document.getElementById('controls-container').style.opacity = '0.3';
+  // read button id, and set as current Shape
   currentShape = eventTarget.id;
   eventTarget.style.backgroundColor = 'black';
   eventTarget.style.color = 'white';
@@ -90,16 +93,19 @@ const exhaleShape = (breathingGuide, percentage, color = '#E8F556') => {
 }
 
 const updateShape = (currentStatus, elapsedMillis, timeInterval) => {
-  if (elapsedMillis >= timeInterval) return;
+  if (elapsedMillis > timeInterval) return;
 
   const breathingGuide = document.getElementById('breathing-guide');
   const remainingSeconds = ((timeInterval - elapsedMillis) / 1000).toFixed(0);
-  const percentage = elapsedMillis / timeInterval * 100;
+  const percentage = (elapsedMillis / timeInterval * 100).toFixed(2);
+
   if (currentStatus === STATUS.hold) holdingShape(breathingGuide);
   if (currentStatus === STATUS.inhale) inhaleShape(breathingGuide, percentage);
   if (currentStatus === STATUS.exhale) exhaleShape(breathingGuide, percentage);
-  breathingGuide.innerHTML = remainingSeconds;
-  breathingGuide.innerHTML += `<small style='font-size: 1.5rem'>${currentStatus}</small>`
+  breathingGuide.innerHTML = `
+    <span>${remainingSeconds}</span>
+    <small style='font-size: 1.5rem'>${currentStatus}</small>
+  `;
 };
 
 /**
@@ -114,7 +120,7 @@ const squareBreathing = (timeInterval) => {
     const currentTime = Date.now();
     const elapsedMillis = (currentTime - startTime);
     updateShape(currentStatus, elapsedMillis, timeInterval);
-    if (elapsedMillis >= timeInterval) {
+    if (elapsedMillis > timeInterval) {
       startTime = currentTime;
       if ([STATUS.inhale, STATUS.exhale].includes(currentStatus)) {
         formerStatus = currentStatus;
@@ -125,7 +131,7 @@ const squareBreathing = (timeInterval) => {
         currentStatus = STATUS.inhale;
       }
     };
-  }, 100);
+  }, REFRESH_RATE_MILLIS);
 }
 
 /**
@@ -140,7 +146,7 @@ const triangleBreathing = (holdAfter = STATUS.inhale, timeInterval) => {
     const currentTime = Date.now();
     const elapsedMillis = (currentTime - startTime);
     updateShape(currentStatus, elapsedMillis, timeInterval);
-    if (elapsedMillis >= timeInterval) {
+    if (elapsedMillis > timeInterval) {
       startTime = currentTime;
       switch (currentStatus) {
         case STATUS.inhale:
@@ -154,7 +160,7 @@ const triangleBreathing = (holdAfter = STATUS.inhale, timeInterval) => {
           break;
       }
     };
-  }, 100);
+  }, REFRESH_RATE_MILLIS);
 };
 
 /**
@@ -179,5 +185,5 @@ const circleBreathing = (timeInterval) => {
           break;
       }
     };
-  }, 100);
+  }, REFRESH_RATE_MILLIS);
 };
