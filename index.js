@@ -4,11 +4,25 @@ REFRESH_RATE_MILLIS = 200;
 
 let mainInterval = null;
 let currentShape = null;
+let darkTheme = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   const buttonSquare = document.getElementById('button-square');
   const buttonTriangle = document.getElementById('button-triangle');
   const buttonCircle = document.getElementById('button-circle');
+  
+  const toggleNightMode = document.getElementById('toggle-night-mode-button');
+  toggleNightMode.addEventListener('click', () => {
+    document.body.classList.toggle('night-mode');
+    darkTheme = !darkTheme;
+    if (darkTheme) {
+      document.getElementById('sun-icon').style.display = 'block';
+      document.getElementById('moon-icon').style.display = 'none';
+    } else {
+      document.getElementById('sun-icon').style.display = 'none';
+      document.getElementById('moon-icon').style.display = 'block';
+    }
+  })
 
   buttonSquare.addEventListener('click', (event) => {
     if (mainInterval && currentShape === event.target.id) {
@@ -43,8 +57,9 @@ const stopGuide = () => {
   clearButtonsBackground();
   const breathingGuide = document.getElementById('breathing-guide');
   document.getElementById('controls-container').style.opacity = '1';
+  document.getElementById('toggle-night-mode-button').style.opacity = '1';
   breathingGuide.innerHTML = '';
-  breathingGuide.style.backgroundColor = 'white';
+  breathingGuide.style.backgroundColor = darkTheme ? 'black' : 'white';
   breathingGuide.style.boxShadow = 'none';
   breathingGuide.style.width = '0';
   breathingGuide.style.height = '0';
@@ -53,8 +68,7 @@ const stopGuide = () => {
 const clearButtonsBackground = () => {
   const controlsContainer = document.getElementById('controls-container')
   Array.from(controlsContainer.getElementsByClassName('button')).forEach((button) => {
-    button.style.backgroundColor = '';
-    button.style.color = 'black';
+    button.classList.remove('selected');
   });
 }
 
@@ -62,10 +76,10 @@ const prepareToBreath = (eventTarget) => {
   clearInterval(mainInterval);
   clearButtonsBackground(); // clear previous selected button
   document.getElementById('controls-container').style.opacity = '0.3';
+  document.getElementById('toggle-night-mode-button').style.opacity = '0.3';
   // read button id, and set as current Shape
   currentShape = eventTarget.id;
-  eventTarget.style.backgroundColor = 'black';
-  eventTarget.style.color = 'white';
+  eventTarget.classList.add('selected');
 };
 
 const holdingShape = (breathingGuide, color = '#56A8F5') => {
