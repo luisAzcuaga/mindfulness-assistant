@@ -1,0 +1,13 @@
+{
+  "name": "Mindfulness Assistant",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "./favicon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
