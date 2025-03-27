@@ -4,7 +4,7 @@ REFRESH_RATE_MILLIS = 200;
 
 let mainInterval = null;
 let currentShape = null;
-let darkTheme = false;
+let darkTheme = true;
 
 document.addEventListener('DOMContentLoaded', () => {
   const buttonSquare = document.getElementById('button-square');
@@ -99,6 +99,7 @@ const inhaleShape = (breathingGuide, percentage, color = '#F55E56') => {
 };
 
 const exhaleShape = (breathingGuide, percentage, color = '#E8F556') => {
+  color = darkTheme ? '#D4883C ' : color; // dark theme yellow alternative
   breathingGuide.style.borderRadius = '100%';
   breathingGuide.style.width = `${100 - percentage}%`;
   breathingGuide.style.height = `${100 - percentage}%`;
