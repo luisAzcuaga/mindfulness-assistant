@@ -15,8 +15,21 @@ body {
 }
 
 body.night-mode {
-  background-color: black;
-  color: white;
+  color: #f5f5f5;
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(135deg, #16161d, #2c2c3a);
+  opacity: 0;
+  transition: .4s;
+}
+
+body.night-mode::before {
+  opacity: 1;
 }
 
 #toggle-night-mode-button {
