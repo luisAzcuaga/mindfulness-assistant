@@ -1,5 +1,5 @@
 // Name of the Cache.
-const CACHE = "mindfulnessAssistantCache_V1";
+const CACHE = "mindfulnessAssistantCache_V2";
 
 // Select files for caching.
 let urlsToCache = [
