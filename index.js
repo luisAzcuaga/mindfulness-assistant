@@ -18,9 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (darkTheme) {
       document.getElementById('sun-icon').style.display = 'block';
       document.getElementById('moon-icon').style.display = 'none';
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", '#16161D');
     } else {
       document.getElementById('sun-icon').style.display = 'none';
       document.getElementById('moon-icon').style.display = 'block';
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", '#FFFFFF');
     }
   })
 
