@@ -1,5 +1,5 @@
 // Name of the Cache.
-const CACHE_NAME = "mindfulnessAssistantCache_V3";
+const CACHE_NAME = "mindfulnessAssistantCache_V4";
 
 // Select files for caching.
 let urlsToCache = [
@@ -34,7 +34,6 @@ self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
-      console.info("Pruning", cacheNames);
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (!cacheWhitelist.includes(cacheName)) {

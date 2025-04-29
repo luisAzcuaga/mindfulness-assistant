@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const buttonSquare = document.getElementById('button-square');
   const buttonTriangle = document.getElementById('button-triangle');
   const buttonCircle = document.getElementById('button-circle');
-  
   const toggleNightMode = document.getElementById('toggle-night-mode-button');
   toggleNightMode.addEventListener('click', () => {
     document.body.classList.toggle('night-mode');
@@ -70,11 +69,13 @@ const clearSounds = () => {
 const playSound = (sound) => {
   if (sound == 'exhaleSound' && lastPlayedSound != 'exhaleSound') {
     holdSound.pause();
+    exhaleSound.currentTime = 0;
     exhaleSound.play();
     lastPlayedSound = 'exhaleSound';
   }
   if (sound == 'inhaleSound' && lastPlayedSound != 'inhaleSound') {
     holdSound.pause();
+    inhaleSound.currentTime = 0;
     inhaleSound.play();
     lastPlayedSound = 'inhaleSound';
   }
@@ -83,7 +84,7 @@ const playSound = (sound) => {
     holdSound.play();
     lastPlayedSound = 'holdSound';
   }
-}
+};
 
 const stopGuide = () => {
   clearSounds();
