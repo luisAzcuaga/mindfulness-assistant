@@ -2,8 +2,13 @@ STATUS = { inhale: 'inhale', exhale: 'exhale', hold: 'hold' };
 BREATHING_TIME_INTERVAL_MILLIS = 4_000; // 4 seconds
 REFRESH_RATE_MILLIS = 200;
 
+const inhaleSound = new Audio('./assets/sounds/inhale.mp3');
+const exhaleSound = new Audio('./assets/sounds/exhale.mp3');
+const holdSound = new Audio('./assets/sounds/hold.mp3');
+
 let mainInterval = null;
 let currentShape = null;
+let lastPlayedSound = null;
 let darkTheme = true;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,7 +57,36 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 });
 
+const clearSounds = () => {
+  lastPlayedSound = null;
+  holdSound.pause();
+  holdSound.currentTime = 0;
+  inhaleSound.pause();
+  inhaleSound.currentTime = 0;
+  exhaleSound.pause();
+  exhaleSound.currentTime = 0;
+};
+
+const playSound = (sound) => {
+  if (sound == 'exhaleSound' && lastPlayedSound != 'exhaleSound') {
+    holdSound.pause();
+    exhaleSound.play();
+    lastPlayedSound = 'exhaleSound';
+  }
+  if (sound == 'inhaleSound' && lastPlayedSound != 'inhaleSound') {
+    holdSound.pause();
+    inhaleSound.play();
+    lastPlayedSound = 'inhaleSound';
+  }
+  if (sound == 'holdSound' && lastPlayedSound != 'holdSound') {
+    holdSound.currentTime = 0;
+    holdSound.play();
+    lastPlayedSound = 'holdSound';
+  }
+}
+
 const stopGuide = () => {
+  clearSounds();
   clearInterval(mainInterval);
   mainInterval = null;
   currentShape = null;
@@ -75,6 +109,7 @@ const clearButtonsBackground = () => {
 }
 
 const prepareToBreath = (eventTarget) => {
+  clearSounds();
   clearInterval(mainInterval);
   clearButtonsBackground(); // clear previous selected button
   document.getElementById('controls-container').style.opacity = '0.3';
@@ -85,6 +120,7 @@ const prepareToBreath = (eventTarget) => {
 };
 
 const holdingShape = (breathingGuide, color = '#56A8F5') => {
+  playSound('holdSound');
   breathingGuide.style.borderRadius = '20%';
   breathingGuide.style.width = '75%';
   breathingGuide.style.height = '75%';
@@ -93,6 +129,7 @@ const holdingShape = (breathingGuide, color = '#56A8F5') => {
 }
 
 const inhaleShape = (breathingGuide, percentage, color = '#F55E56') => {
+  playSound('inhaleSound');
   breathingGuide.style.borderRadius = '100%';
   breathingGuide.style.width = `${percentage}%`;
   breathingGuide.style.height = `${percentage}%`;
@@ -101,6 +138,7 @@ const inhaleShape = (breathingGuide, percentage, color = '#F55E56') => {
 };
 
 const exhaleShape = (breathingGuide, percentage, color = '#E8F556') => {
+  playSound('exhaleSound');
   color = darkTheme ? '#D4883C ' : color; // dark theme yellow alternative
   breathingGuide.style.borderRadius = '100%';
   breathingGuide.style.width = `${100 - percentage}%`;
