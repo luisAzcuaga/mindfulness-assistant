@@ -87,12 +87,12 @@ const playSound = (currentSound) => {
 };
 
 const stopGuide = () => {
-  clearSounds();
-  lastPlayedSound = null;
-  clearInterval(mainInterval);
+  clearSounds(); // pause and rewind all sounds
+  lastPlayedSound = null; // reset last played sound
+  clearInterval(mainInterval); // stop the interval
   mainInterval = null;
   currentShape = null;
-  clearButtonsBackground();
+  clearButtonsBackground(); // clear previous selected button
   const breathingGuide = document.getElementById('breathing-guide');
   document.getElementById('controls-container').style.opacity = '1';
   document.getElementById('toggle-night-mode-button').style.opacity = '1';
@@ -109,9 +109,7 @@ const clearButtonsBackground = () => {
 }
 
 const prepareToBreath = (eventTarget) => {
-  lastPlayedSound = null;
-  clearInterval(mainInterval);
-  clearButtonsBackground(); // clear previous selected button
+  stopGuide();
   document.getElementById('controls-container').style.opacity = '0.3';
   document.getElementById('toggle-night-mode-button').style.opacity = '0.3';
   // read button id, and set as current Shape
