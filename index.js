@@ -4,6 +4,11 @@ REFRESH_RATE_MILLIS = 200;
 const params = new URLSearchParams(window.location.search);
 const debug_mode = params.get('debug') === 'true';
 
+const themeColors = {
+  light: { inhale: '#F55E56', exhale: '#E8F556', hold: '#56A8F5' },
+  dark: { inhale: '#F55E56', exhale: '#D4883C', hold: '#56A8F5' },
+}
+
 const soundsMap = {
   inhaleSound: new Audio('./assets/sounds/inhale.mp3'),
   exhaleSound: new Audio('./assets/sounds/exhale.mp3'),
@@ -117,8 +122,9 @@ const prepareToBreath = (eventTarget) => {
   eventTarget.classList.add('selected');
 };
 
-const holdingShape = (breathingGuide, color = '#56A8F5') => {
+const holdingShape = (breathingGuide) => {
   playSound('holdSound');
+  const color = darkTheme ? themeColors.dark.hold : themeColors.light.hold;
   breathingGuide.style.borderRadius = '20%';
   breathingGuide.style.width = '75%';
   breathingGuide.style.height = '75%';
@@ -126,8 +132,9 @@ const holdingShape = (breathingGuide, color = '#56A8F5') => {
   breathingGuide.style.boxShadow = `0 0 20px 1px ${color}`;
 }
 
-const inhaleShape = (breathingGuide, percentage, color = '#F55E56') => {
+const inhaleShape = (breathingGuide, percentage) => {
   playSound('inhaleSound');
+  const color = darkTheme ? themeColors.dark.inhale : themeColors.light.inhale;
   breathingGuide.style.borderRadius = '100%';
   breathingGuide.style.width = `${percentage}%`;
   breathingGuide.style.height = `${percentage}%`;
@@ -135,9 +142,9 @@ const inhaleShape = (breathingGuide, percentage, color = '#F55E56') => {
   breathingGuide.style.boxShadow = `0 0 20px 1px ${color}`;
 };
 
-const exhaleShape = (breathingGuide, percentage, color = '#E8F556') => {
+const exhaleShape = (breathingGuide, percentage) => {
   playSound('exhaleSound');
-  color = darkTheme ? '#D4883C ' : color; // dark theme yellow alternative
+  const color = darkTheme ? themeColors.dark.exhale : themeColors.light.exhale;
   breathingGuide.style.borderRadius = '100%';
   breathingGuide.style.width = `${100 - percentage}%`;
   breathingGuide.style.height = `${100 - percentage}%`;
