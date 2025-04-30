@@ -156,7 +156,7 @@ const updateShape = (currentStatus, elapsedMillis, timeInterval) => {
   if (elapsedMillis > timeInterval) return;
 
   const breathingGuide = document.getElementById('breathing-guide');
-  const remainingSeconds = ((timeInterval - elapsedMillis) / 1000).toFixed(0);
+  const remainingSeconds = Math.max(1, Math.ceil((timeInterval - elapsedMillis) / 1000));
   const percentage = (elapsedMillis / timeInterval * 100).toFixed(2);
 
   if (currentStatus === STATUS.hold) holdingShape(breathingGuide);
