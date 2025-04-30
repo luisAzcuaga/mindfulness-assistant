@@ -74,10 +74,15 @@ const playSound = (currentSound) => {
 
   try {
     clearSounds();
-    soundsMap[currentSound].play();
-    lastPlayedSound = currentSound;
+    requestAnimationFrame(() => {
+      soundsMap[currentSound].play()
+        .catch((error) => {
+          if (debug_mode) alert(`play() error: ${error.message}`);
+        })
+      lastPlayedSound = currentSound;
+    });
   } catch (e) {
-    if (debug_mode) alert(`Error: ${e.message}`);
+    if (debug_mode) alert(`playSound error: ${e.message}`);
   }
 };
 
