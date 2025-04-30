@@ -92,8 +92,6 @@ const stopGuide = () => {
   document.getElementById('controls-container').style.opacity = '1';
   document.getElementById('toggle-night-mode-button').style.opacity = '1';
   breathingGuide.innerHTML = '';
-  breathingGuide.style.backgroundColor = darkTheme ? 'black' : 'white';
-  breathingGuide.style.boxShadow = 'none';
   breathingGuide.style.width = '0';
   breathingGuide.style.height = '0';
 };
