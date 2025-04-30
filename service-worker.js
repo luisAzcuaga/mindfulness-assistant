@@ -1,8 +1,10 @@
 // Name of the Cache.
-const CACHE_NAME = "mindfulnessAssistantCache_V5";
+const CACHE_NAME = "mindfulnessAssistantCache_V6";
+const params = new URLSearchParams(window.location.search);
+const debug_mode = params.get('debug') === 'true';
 
 // Select files for caching.
-let urlsToCache = [
+const urlsToCache = [
   "/",
   "/index.html",
   "/index.js",
@@ -34,6 +36,7 @@ self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
+      if (debug_mode) alert(`Pruning cache ${cacheNames}`);
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (!cacheWhitelist.includes(cacheName)) {
