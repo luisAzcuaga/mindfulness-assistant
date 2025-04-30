@@ -1,6 +1,8 @@
 STATUS = { inhale: 'inhale', exhale: 'exhale', hold: 'hold' };
 BREATHING_TIME_INTERVAL_MILLIS = 4_000; // 4 seconds
 REFRESH_RATE_MILLIS = 200;
+const params = new URLSearchParams(window.location.search);
+const debug_mode = params.get('debug') === 'true';
 
 const inhaleSound = new Audio('./assets/sounds/inhale.mp3');
 const exhaleSound = new Audio('./assets/sounds/exhale.mp3');
@@ -12,6 +14,8 @@ let lastPlayedSound = null;
 let darkTheme = true;
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (debug_mode) console.info('%cSaludos a Walter', "color: purple; font-size: 20px;");
+  if (debug_mode) alert('Debug mode enabled');
   const buttonSquare = document.getElementById('button-square');
   const buttonTriangle = document.getElementById('button-triangle');
   const buttonCircle = document.getElementById('button-circle');
