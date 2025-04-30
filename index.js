@@ -4,9 +4,11 @@ REFRESH_RATE_MILLIS = 200;
 const params = new URLSearchParams(window.location.search);
 const debug_mode = params.get('debug') === 'true';
 
-const inhaleSound = new Audio('./assets/sounds/inhale.mp3');
-const exhaleSound = new Audio('./assets/sounds/exhale.mp3');
-const holdSound = new Audio('./assets/sounds/hold.mp3');
+const soundsMap = {
+  inhaleSound: new Audio('./assets/sounds/inhale.mp3'),
+  exhaleSound: new Audio('./assets/sounds/exhale.mp3'),
+  holdSound: new Audio('./assets/sounds/hold.mp3'),
+};
 
 let mainInterval = null;
 let currentShape = null;
@@ -61,37 +63,27 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const clearSounds = () => {
-  lastPlayedSound = null;
-  holdSound.pause();
-  holdSound.currentTime = 0;
-  inhaleSound.pause();
-  inhaleSound.currentTime = 0;
-  exhaleSound.pause();
-  exhaleSound.currentTime = 0;
+  Object.values(soundsMap).forEach((sound) => {
+    sound.pause();
+    sound.currentTime = 0;
+  });
 };
 
-const playSound = (sound) => {
-  if (sound == 'exhaleSound' && lastPlayedSound != 'exhaleSound') {
-    holdSound.pause();
-    exhaleSound.currentTime = 0;
-    exhaleSound.play();
-    lastPlayedSound = 'exhaleSound';
-  }
-  if (sound == 'inhaleSound' && lastPlayedSound != 'inhaleSound') {
-    holdSound.pause();
-    inhaleSound.currentTime = 0;
-    inhaleSound.play();
-    lastPlayedSound = 'inhaleSound';
-  }
-  if (sound == 'holdSound' && lastPlayedSound != 'holdSound') {
-    holdSound.currentTime = 0;
-    holdSound.play();
-    lastPlayedSound = 'holdSound';
+const playSound = (currentSound) => {
+  if (currentSound === lastPlayedSound) return;
+
+  try {
+    clearSounds();
+    soundsMap[currentSound].play();
+    lastPlayedSound = currentSound;
+  } catch (e) {
+    if (debug_mode) alert(`Error: ${e.message}`);
   }
 };
 
 const stopGuide = () => {
   clearSounds();
+  lastPlayedSound = null;
   clearInterval(mainInterval);
   mainInterval = null;
   currentShape = null;
@@ -114,7 +106,7 @@ const clearButtonsBackground = () => {
 }
 
 const prepareToBreath = (eventTarget) => {
-  clearSounds();
+  lastPlayedSound = null;
   clearInterval(mainInterval);
   clearButtonsBackground(); // clear previous selected button
   document.getElementById('controls-container').style.opacity = '0.3';
