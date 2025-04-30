@@ -1,7 +1,5 @@
 // Name of the Cache.
-const CACHE_NAME = "mindfulnessAssistantCache_V6";
-const params = new URLSearchParams(window.location.search);
-const debug_mode = params.get('debug') === 'true';
+const CACHE_NAME = "mindfulnessAssistantCache_V7";
 
 // Select files for caching.
 const urlsToCache = [
@@ -9,7 +7,7 @@ const urlsToCache = [
   "/index.html",
   "/index.js",
   "/index.css",
-  "/favicon.png", 
+  "/favicon.png",
   "assets/sounds/exhale.mp3",
   "assets/sounds/inhale.mp3",
   "assets/sounds/hold.mp3",
@@ -35,15 +33,15 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      if (debug_mode) alert(`Pruning cache ${cacheNames}`);
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys()
+      .then((cacheNames) => (
+        Promise.all(
+          cacheNames.map((cacheName) => {
+            if (!cacheWhitelist.includes(cacheName)) {
+              return caches.delete(cacheName);
+            }
+          })
+        )
+      ))
   );
 });
