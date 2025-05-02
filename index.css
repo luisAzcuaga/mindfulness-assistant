@@ -23,7 +23,7 @@ body::before {
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: linear-gradient(135deg, #16161d, #2c2c3a);
+  background: linear-gradient(180deg, #16161d, #2c2c3a);
   opacity: 0;
   transition: .4s;
 }
