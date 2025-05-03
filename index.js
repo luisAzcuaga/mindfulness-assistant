@@ -9,16 +9,11 @@ const themeColors = {
   dark: { inhale: '#F55E56', exhale: '#D4883C', hold: '#56A8F5' },
 }
 
-const masterSound = new Audio('./assets/sounds/sound-mix.mp3');
-const soundStart = {
-  inhaleSound: 0,
-  exhaleSound: 1,
-  holdSound: 2,
-};
-const soundEnd = {
-  inhaleSound: 1,
-  exhaleSound: 1,
-  holdSound: 4,
+const mainTrack = new Audio('./assets/sounds/sound-mix.mp3');
+const trackIndex = {
+  inhaleSound: { start: 0, duration: 1 },
+  exhaleSound: { start: 1, duration: 1 },
+  holdSound: { start: 2, duration: 3.9 },
 };
 
 let mainInterval = null;
@@ -73,29 +68,25 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 });
 
-const clearSounds = () => {
-  masterSound.pause();
-};
+const durationMs = (sound) => trackIndex[sound].duration * 1000;
 
 const playSound = (currentSound) => {
   if (currentSound === lastPlayedSound) return;
 
   try {
-    masterSound.currentTime = soundStart[currentSound];
-    masterSound.play().catch((error) => {
+    mainTrack.currentTime = trackIndex[currentSound].start;
+    mainTrack.play().catch((error) => {
       if (debug_mode) alert(`play() error: ${error.message}`);
     })
     lastPlayedSound = currentSound;
-    setTimeout(() => {
-      masterSound.pause();
-    }, soundEnd[currentSound] * 1000);
+    setTimeout(() => (mainTrack.pause()), durationMs(currentSound));
   } catch (e) {
     if (debug_mode) alert(`playSound error: ${e.message}`);
   }
 };
 
 const stopGuide = () => {
-  clearSounds(); // pause and rewind all sounds
+  mainTrack.pause();
   lastPlayedSound = null; // reset last played sound
   clearInterval(mainInterval); // stop the interval
   mainInterval = null;
