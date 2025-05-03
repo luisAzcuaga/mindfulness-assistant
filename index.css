@@ -51,6 +51,25 @@ body.night-mode #toggle-night-mode-button {
   border: 1px solid white;
 }
 
+#toggle-sound-button {
+  width: 15px;
+  height: 15px;
+  font-size: 1rem;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  padding: 5px;
+  border: 1px solid black;
+}
+
+body.night-mode #toggle-sound-button {
+  border: 1px solid white;
+}
+
 .button {
   font-size: 2rem;
   border: 1px solid black;

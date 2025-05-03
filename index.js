@@ -19,6 +19,7 @@ const trackIndex = {
 let mainInterval = null;
 let currentShape = null;
 let lastPlayedSound = null;
+let muted = false;
 let darkTheme = true;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const buttonTriangle = document.getElementById('button-triangle');
   const buttonCircle = document.getElementById('button-circle');
   const toggleNightMode = document.getElementById('toggle-night-mode-button');
+  const toggleSound = document.getElementById('toggle-sound-button');
   toggleNightMode.addEventListener('click', () => {
     document.body.classList.toggle('night-mode');
     darkTheme = !darkTheme;
@@ -41,7 +43,17 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('meta[name="theme-color"]').setAttribute("content", '#FFFFFF');
     }
   })
-
+  toggleSound.addEventListener('click', () => {
+    mainTrack.muted = !mainTrack.muted;
+    muted = !muted;
+    if (muted) {
+      document.getElementById('sound-icon').style.display = 'none';
+      document.getElementById('mute-icon').style.display = 'block';
+    } else {
+      document.getElementById('sound-icon').style.display = 'block';
+      document.getElementById('mute-icon').style.display = 'none';
+    }
+  })
   buttonSquare.addEventListener('click', (event) => {
     if (mainInterval && currentShape === event.target.id) {
       stopGuide();
@@ -95,6 +107,7 @@ const stopGuide = () => {
   const breathingGuide = document.getElementById('breathing-guide');
   document.getElementById('controls-container').style.opacity = '1';
   document.getElementById('toggle-night-mode-button').style.opacity = '1';
+  document.getElementById('toggle-sound-button').style.opacity = '1';
   breathingGuide.innerHTML = '';
   breathingGuide.style.width = '0';
   breathingGuide.style.height = '0';
@@ -111,6 +124,7 @@ const prepareToBreath = (eventTarget) => {
   stopGuide();
   document.getElementById('controls-container').style.opacity = '0.3';
   document.getElementById('toggle-night-mode-button').style.opacity = '0.3';
+  document.getElementById('toggle-sound-button').style.opacity = '0.3';
   // read button id, and set as current Shape
   currentShape = eventTarget.id;
   eventTarget.classList.add('selected');
