@@ -9,10 +9,16 @@ const themeColors = {
   dark: { inhale: '#F55E56', exhale: '#D4883C', hold: '#56A8F5' },
 }
 
-const soundsMap = {
-  inhaleSound: new Audio('./assets/sounds/inhale.mp3'),
-  exhaleSound: new Audio('./assets/sounds/exhale.mp3'),
-  holdSound: new Audio('./assets/sounds/hold.mp3'),
+const masterSound = new Audio('./assets/sounds/sound-mix.mp3');
+const soundStart = {
+  inhaleSound: 0,
+  exhaleSound: 1,
+  holdSound: 2,
+};
+const soundEnd = {
+  inhaleSound: 1,
+  exhaleSound: 1,
+  holdSound: 4,
 };
 
 let mainInterval = null;
@@ -68,24 +74,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const clearSounds = () => {
-  Object.values(soundsMap).forEach((sound) => {
-    sound.pause();
-    sound.currentTime = 0;
-  });
+  masterSound.pause();
 };
 
 const playSound = (currentSound) => {
   if (currentSound === lastPlayedSound) return;
 
   try {
-    clearSounds();
-    requestAnimationFrame(() => {
-      soundsMap[currentSound].play()
-        .catch((error) => {
-          if (debug_mode) alert(`play() error: ${error.message}`);
-        })
-      lastPlayedSound = currentSound;
-    });
+    masterSound.currentTime = soundStart[currentSound];
+    masterSound.play().catch((error) => {
+      if (debug_mode) alert(`play() error: ${error.message}`);
+    })
+    lastPlayedSound = currentSound;
+    setTimeout(() => {
+      masterSound.pause();
+    }, soundEnd[currentSound] * 1000);
   } catch (e) {
     if (debug_mode) alert(`playSound error: ${e.message}`);
   }
