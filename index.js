@@ -87,9 +87,11 @@ const playSound = (currentSound) => {
 
   try {
     mainTrack.currentTime = trackIndex[currentSound].start;
-    mainTrack.play().catch((error) => {
-      if (debug_mode) alert(`play() error: ${error.message}`);
-    })
+    requestAnimationFrame(() => {
+      mainTrack.play().catch((error) => {
+        if (debug_mode) alert(`play() error: ${error.message}`);
+      })
+    });
     lastPlayedSound = currentSound;
     setTimeout(() => (mainTrack.pause()), durationMs(currentSound));
   } catch (e) {

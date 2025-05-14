@@ -1,5 +1,5 @@
 // Name of the Cache.
-const CACHE_NAME = "mindfulnessAssistantCache_V10";
+const CACHE_NAME = "mindfulnessAssistantCache_V11";
 
 // Select files for caching.
 const urlsToCache = [
