@@ -1,5 +1,5 @@
 // Name of the Cache.
-const CACHE_NAME = "mindfulnessAssistantCache_V11";
+const CACHE_NAME = "mindfulnessAssistantCache_V12";
 
 // Select files for caching.
 const urlsToCache = [
@@ -9,7 +9,9 @@ const urlsToCache = [
   "/index.css",
   "/favicon.ico",
   "/manifest.json",
-  "./assets/sounds/sound-mix.mp3",
+  "./assets/sounds/inhale.mp3",
+  "./assets/sounds/exhale.mp3",
+  "./assets/sounds/hold.mp3",
   "./assets/icons/android-chrome-192x192.png",
   "./assets/icons/android-chrome-512x512.png",
   "./assets/icons/apple-touch-icon.png",

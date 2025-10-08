@@ -9,12 +9,9 @@ const themeColors = {
   dark: { inhale: '#F55E56', exhale: '#D4883C', hold: '#56A8F5' },
 }
 
-const mainTrack = new Audio('./assets/sounds/sound-mix.mp3');
-const trackIndex = {
-  inhaleSound: { start: 0, duration: 1 },
-  exhaleSound: { start: 1, duration: 1 },
-  holdSound: { start: 2, duration: 3.9 },
-};
+const inhaleAudio = new Audio('./assets/sounds/inhale.mp3');
+const exhaleAudio = new Audio('./assets/sounds/exhale.mp3');
+const holdAudio = new Audio('./assets/sounds/hold.mp3');
 
 let mainInterval = null;
 let currentShape = null;
@@ -24,7 +21,7 @@ let darkTheme = true;
 
 document.addEventListener('DOMContentLoaded', () => {
   if (debug_mode) console.info('%cSaludos a Walter', "color: purple; font-size: 20px;");
-  if (debug_mode) alert('Debug mode enabled');
+  if (debug_mode) alert('Debug mode enabled (CACHE_V12)');
   const buttonSquare = document.getElementById('button-square');
   const buttonTriangle = document.getElementById('button-triangle');
   const buttonCircle = document.getElementById('button-circle');
@@ -44,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
   toggleSound.addEventListener('click', () => {
-    mainTrack.muted = !mainTrack.muted;
     muted = !muted;
+    [inhaleAudio, exhaleAudio, holdAudio].forEach(audio => audio.muted = muted);
     if (muted) {
       document.getElementById('sound-icon').style.display = 'none';
       document.getElementById('mute-icon').style.display = 'block';
@@ -80,27 +77,46 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 });
 
-const durationMs = (sound) => trackIndex[sound].duration * 1000;
+const unlockAudio = () => {
+  [inhaleAudio, exhaleAudio, holdAudio].forEach(audio => {
+    audio.load();
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+    }).catch(() => {
+      // Ignore errors during unlock
+    });
+  });
+};
 
 const playSound = (currentSound) => {
   if (currentSound === lastPlayedSound) return;
 
+  const audioMap = {
+    inhaleSound: inhaleAudio,
+    exhaleSound: exhaleAudio,
+    holdSound: holdAudio
+  };
+
   try {
-    mainTrack.currentTime = trackIndex[currentSound].start;
-    requestAnimationFrame(() => {
-      mainTrack.play().catch((error) => {
-        if (debug_mode) alert(`play() error: ${error.message}`);
-      })
+    // Pause every audio before playing the next one
+    [inhaleAudio, exhaleAudio, holdAudio].forEach(audio => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+
+    const audio = audioMap[currentSound];
+    audio.play().catch((error) => {
+      if (debug_mode) alert(`play() error: ${error.message}`);
     });
     lastPlayedSound = currentSound;
-    setTimeout(() => (mainTrack.pause()), durationMs(currentSound));
   } catch (e) {
     if (debug_mode) alert(`playSound error: ${e.message}`);
   }
 };
 
 const stopGuide = () => {
-  mainTrack.pause();
+  [inhaleAudio, exhaleAudio, holdAudio].forEach(audio => audio.pause());
   lastPlayedSound = null; // reset last played sound
   clearInterval(mainInterval); // stop the interval
   mainInterval = null;
@@ -124,6 +140,7 @@ const clearButtonsBackground = () => {
 
 const prepareToBreath = (eventTarget) => {
   stopGuide();
+  unlockAudio();
   document.getElementById('controls-container').style.opacity = '0.3';
   document.getElementById('toggle-night-mode-button').style.opacity = '0.3';
   document.getElementById('toggle-sound-button').style.opacity = '0.3';
