@@ -21,7 +21,7 @@ let darkTheme = true;
 
 document.addEventListener('DOMContentLoaded', () => {
   if (debug_mode) console.info('%cSaludos a Walter', "color: purple; font-size: 20px;");
-  if (debug_mode) alert('Debug mode enabled (CACHE_V12');
+  if (debug_mode) alert('Debug mode enabled (CACHE_V12)');
   const buttonSquare = document.getElementById('button-square');
   const buttonTriangle = document.getElementById('button-triangle');
   const buttonCircle = document.getElementById('button-circle');
