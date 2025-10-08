@@ -99,7 +99,7 @@ const playSound = (currentSound) => {
   };
 
   try {
-    // Pausar todos los audios antes de reproducir el nuevo
+    // Pause every audio before playing the next one
     [inhaleAudio, exhaleAudio, holdAudio].forEach(audio => {
       audio.pause();
       audio.currentTime = 0;
