@@ -99,8 +99,13 @@ const playSound = (currentSound) => {
   };
 
   try {
+    // Pausar todos los audios antes de reproducir el nuevo
+    [inhaleAudio, exhaleAudio, holdAudio].forEach(audio => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+
     const audio = audioMap[currentSound];
-    audio.currentTime = 0;
     audio.play().catch((error) => {
       if (debug_mode) alert(`play() error: ${error.message}`);
     });
