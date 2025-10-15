@@ -1,5 +1,8 @@
 STATUS = { inhale: 'inhale', exhale: 'exhale', hold: 'hold' };
-BREATHING_TIME_INTERVAL_MILLIS = 4_000; // 4 seconds
+FOUR_SECONDS_INTERVAL = 4_000; // 4 seconds
+FIVE_SECONDS_INTERVAL = 5_000; // 5 seconds
+SEVEN_SECONDS_INTERVAL = 7_000; // 7 seconds
+EIGHT_SECONDS_INTERVAL = 8_000; // 8 seconds
 REFRESH_RATE_MILLIS = 200;
 const params = new URLSearchParams(window.location.search);
 const debug_mode = params.get('debug') === 'true';
@@ -23,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (debug_mode) console.info('%cSaludos a Walter', "color: purple; font-size: 20px;");
   if (debug_mode) alert('Debug mode enabled (CACHE_V12)');
   const buttonSquare = document.getElementById('button-square');
-  const buttonTriangle = document.getElementById('button-triangle');
+  // const buttonTriangle = document.getElementById('button-triangle');
+  const buttonTriangle478 = document.getElementById('button-triangle-478');
   const buttonCircle = document.getElementById('button-circle');
   const toggleNightMode = document.getElementById('toggle-night-mode-button');
   const toggleSound = document.getElementById('toggle-sound-button');
@@ -56,15 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
       stopGuide();
     } else {
       prepareToBreath(event.target);
-      squareBreathing(BREATHING_TIME_INTERVAL_MILLIS);
+      squareBreathing(FOUR_SECONDS_INTERVAL);
     }
   })
-  buttonTriangle.addEventListener('click', (event) => {
+  // buttonTriangle.addEventListener('click', (event) => {
+  //   if (mainInterval && currentShape === event.target.id) {
+  //     stopGuide();
+  //   } else {
+  //     prepareToBreath(event.target);
+  //     triangleBreathing(FOUR_SECONDS_INTERVAL);
+  //   }
+  // })
+  buttonTriangle478.addEventListener('click', (event) => {
     if (mainInterval && currentShape === event.target.id) {
       stopGuide();
     } else {
       prepareToBreath(event.target);
-      triangleBreathing(STATUS.exhale, BREATHING_TIME_INTERVAL_MILLIS);
+      triangleBreathing(FOUR_SECONDS_INTERVAL, SEVEN_SECONDS_INTERVAL, EIGHT_SECONDS_INTERVAL);
     }
   })
   buttonCircle.addEventListener('click', (event) => {
@@ -72,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
       stopGuide();
     } else {
       prepareToBreath(event.target);
-      circleBreathing(BREATHING_TIME_INTERVAL_MILLIS);
+      circleBreathing(FIVE_SECONDS_INTERVAL);
     }
   })
 });
@@ -222,28 +234,37 @@ const squareBreathing = (timeInterval) => {
 }
 
 /**
- * Square breathing: Ideal for axious moments.
- * @param {inhale | exhale} holdAfter - When will the holding step shows up.
- * @param {number} timeInterval - time in milliseconds for each step. 
+ * Triangle breathing: Flexible breathing pattern with hold phase.
+ * @param {number} inhaleDuration - time in milliseconds for inhale phase
+ * @param {number} holdDuration - (optional) time in milliseconds for hold phase. If not provided, uses inhaleDuration
+ * @param {number} exhaleDuration - (optional) time in milliseconds for exhale phase. If not provided, uses inhaleDuration
  */
-const triangleBreathing = (holdAfter = STATUS.inhale, timeInterval) => {
+const triangleBreathing = (inhaleDuration, holdDuration, exhaleDuration) => {
+  // If only one parameter provided, use it for all phases (symmetric)
+  const durations = {
+    [STATUS.inhale]: inhaleDuration,
+    [STATUS.hold]: holdDuration !== undefined ? holdDuration : inhaleDuration,
+    [STATUS.exhale]: exhaleDuration !== undefined ? exhaleDuration : inhaleDuration
+  };
+
   let startTime = Date.now();
   let currentStatus = STATUS.inhale;
   mainInterval = setInterval(() => {
     const currentTime = Date.now();
     const elapsedMillis = (currentTime - startTime);
-    updateShape(currentStatus, elapsedMillis, timeInterval);
-    if (elapsedMillis > timeInterval) {
+    const currentDuration = durations[currentStatus];
+    updateShape(currentStatus, elapsedMillis, currentDuration);
+    if (elapsedMillis > currentDuration) {
       startTime = currentTime;
       switch (currentStatus) {
         case STATUS.inhale:
-          currentStatus = holdAfter === STATUS.inhale ? STATUS.hold : STATUS.exhale;
-          break;
-        case STATUS.exhale:
-          currentStatus = holdAfter === STATUS.inhale ? STATUS.inhale : STATUS.hold;
+          currentStatus = STATUS.hold;
           break;
         case STATUS.hold:
-          currentStatus = holdAfter === STATUS.inhale ? STATUS.exhale : STATUS.inhale;
+          currentStatus = STATUS.exhale;
+          break;
+        case STATUS.exhale:
+          currentStatus = STATUS.inhale;
           break;
       }
     };
