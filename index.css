@@ -122,3 +122,9 @@ body.night-mode .button.selected {
   width: 0;
   height: 0;
 }
+
+@media (max-width: 768px) {
+  .triangle-text {
+    display: none;
+  }
+}
